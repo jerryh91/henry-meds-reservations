@@ -32,6 +32,8 @@ public class ProvidersController {
     public ResponseEntity<String> replaceTimelots( @RequestBody ProviderAvailability providerAvailability) {
         if (!providerAvailability.isValid()) return ResponseEntity.badRequest().body("endTime is 15 minutes less than StartTime");
        
+        providerAvailability.setStartDateTime(providerAvailability.getStartDateTime().withZoneSameInstant(ZoneId.of("UTC")));
+        providerAvailability.setEndDateTime(providerAvailability.getEndDateTime().withZoneSameInstant(ZoneId.of("UTC")));
         //call scheduleService to persist available time slots 
         scheduleService.replaceTimeslots(providerAvailability);
 

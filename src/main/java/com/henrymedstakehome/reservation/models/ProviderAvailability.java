@@ -1,6 +1,7 @@
 
 package com.henrymedstakehome.reservation.models;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -15,14 +16,6 @@ public class ProviderAvailability {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mmXXX")
     private ZonedDateTime endDateTime;
-
-    // public ProviderAvailability(Provider provider, ZonedDateTime startDateTime, ZonedDateTime endDateTime) {
-    //     //TODO: Add null checks
-    //     this.provider = provider;
-    //     //Convert each dateTime to UTC
-    //     this.startDateTime = startDateTime.withZoneSameInstant(ZoneId.of("UTC"));
-    //     this.endDateTime = endDateTime.withZoneSameInstant(ZoneId.of("UTC"));
-    // }
 
     public ProviderAvailability() {
     }

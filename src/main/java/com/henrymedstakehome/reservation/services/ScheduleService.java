@@ -28,7 +28,6 @@ public class ScheduleService {
             this.timeslots.add(new ProviderTimeslot(providerAvailability.getProvider(), currStartTime, null));
             currStartTime = currStartTime.plusMinutes(15);
         }
-
     }
     
     // public List<ZonedDateTime> getTimeslots() {
