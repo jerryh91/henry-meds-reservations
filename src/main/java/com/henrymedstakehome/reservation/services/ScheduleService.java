@@ -19,12 +19,13 @@ public class ScheduleService {
 
     //Assume: overwrites all existing timeslots for providerId.
     public void replaceTimeslots(final ProviderAvailability providerAvailability) {
-        //create 15 min block of time between startTime and endTime inclusive
         //remove all existing provider timeslots
         this.timeslots = timeslots.stream().filter(t -> !t.getProvider().equals(providerAvailability.getProvider())).collect(Collectors 
                             .toCollection(ArrayList::new));
         ZonedDateTime currStartTime = providerAvailability.getStartDateTime();
         ZonedDateTime endTime = providerAvailability.getEndDateTime();
+
+        //create 15 min block of time between startTime and endTime inclusive
         while (currStartTime.plusMinutes(15).isEqual(endTime) ||
                currStartTime.plusMinutes(15).isBefore(endTime)) {
             this.timeslots.add(new ProviderTimeslot(providerAvailability.getProvider(), currStartTime, null));
