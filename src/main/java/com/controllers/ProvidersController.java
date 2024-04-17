@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.models.Availability;
+import com.models.ProviderTimeslot;
 import com.models.ProviderAvailability;
 import com.services.ScheduleService;
 
