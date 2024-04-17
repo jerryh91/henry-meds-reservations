@@ -3,6 +3,8 @@ package com.models;
 import java.time.ZonedDateTime;
 
 public class Reservation {
+
+    private Provider provider;
     
     private ZonedDateTime startTime;
 

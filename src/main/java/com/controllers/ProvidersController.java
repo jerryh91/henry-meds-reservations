@@ -26,7 +26,7 @@ public class ProvidersController {
 //     - Allows providers to submit times they are available for appointments
 //     - e.g. On Friday the 13th of August, Dr. Jekyll wants to work between 8am and 3pm
     @PostMapping(value = "/{providerId}/timeslots", consumes = "application/json")
-    public ResponseEntity<String> postTimeslots(@PathVariable String providerId, @RequestBody Availability availability) {
+    public ResponseEntity<String> replaceTimelots(@PathVariable String providerId, @RequestBody Availability availability) {
         //edge cases: 
         if (!availability.isValid()) return ResponseEntity.badRequest().body("StartTime or endTime provided is empty");
         //if less than 15 mins between end - start 

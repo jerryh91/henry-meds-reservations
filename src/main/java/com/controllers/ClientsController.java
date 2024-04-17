@@ -1,7 +1,13 @@
 package com.controllers;
 
-import org.springframework.web.bind.annotation.GetMapping;
+import java.time.ZonedDateTime;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.models.Reservation;
 
 // - Allows a client to retrieve a list of available appointment slots
 //     - Appointment slots are 15 minutes long
@@ -22,6 +28,13 @@ public class ClientsController {
 
 
     //reserve timeslot: 
-    //
+    @PostMapping(value = "/reservations")
+    public ResponseEntity<Reservation> reserveTimeslot(@RequestBody ZonedDateTime startTime) {
+        //find first doctor with this available time slot and update expireTime.
+        //return provider data
+    }
+
+
     // @GetMapping(value = "/{}")
+
 }
