@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.models.Reservation;
 
 // - Allows a client to retrieve a list of available appointment slots
 //     - Appointment slots are 15 minutes long

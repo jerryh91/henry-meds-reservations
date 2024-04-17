@@ -1,6 +1,6 @@
 package com.models;
 
-public class Provider {
+public class Provider  {
     
     private String firstName;
     private String lastName;
@@ -10,6 +10,24 @@ public class Provider {
         this.firstName = firstName;
         this.lastName = lastName;
         this.providerId = providerId;
+    }
+
+    public String getProviderId() {
+        return this.providerId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+         if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof Provider)) {
+            return false;
+        }
+         
+        Provider p = (Provider) o;
+        return this.providerId.equals(p.getProviderId());
     }
     
 }
