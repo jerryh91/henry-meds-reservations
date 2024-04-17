@@ -26,8 +26,8 @@ public class ProvidersController {
 
 //     - Allows providers to submit times they are available for appointments
 //     - e.g. On Friday the 13th of August, Dr. Jekyll wants to work between 8am and 3pm
-    @PostMapping(value = "/{providerId}/timeslots", consumes = "application/json")
-    public ResponseEntity<String> replaceTimelots(@PathVariable String providerId, @RequestBody ProviderAvailability providerAvailability) {
+    @PostMapping(value = "/timeslots", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<String> replaceTimelots( @RequestBody ProviderAvailability providerAvailability) {
         if (!providerAvailability.isValid()) return ResponseEntity.badRequest().body("endTime is 15 minutes less than StartTime");
        
         //call scheduleService to persist available time slots 
@@ -37,8 +37,8 @@ public class ProvidersController {
     } 
 
 
-    @GetMapping(value = "/timeslots",  consumes = "application/json", produces = "application/json")
-    public ResponseEntity<List<ZonedDateTime>> getTimeslots() {
-        return ResponseEntity.ok().body(this.scheduleService.getTimeslots());
-    }
+    // @GetMapping(value = "/timeslots",  consumes = "application/json", produces = "application/json")
+    // public ResponseEntity<List<ZonedDateTime>> getTimeslots() {
+    //     return ResponseEntity.ok().body(this.scheduleService.getTimeslots());
+    // }
 }

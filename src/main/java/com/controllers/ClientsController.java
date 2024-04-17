@@ -26,15 +26,15 @@ public class ClientsController {
     
 
 
-    //reserve timeslot: 
-    @PostMapping(value = "/reservations")
-    public ResponseEntity<Reservation> reserveTimeslot(@RequestBody ZonedDateTime startTime) {
-        //find first doctor with this available time slot and update expireTime.
-        //if not available 
-        //return provider data
-    }
+    // //reserve timeslot: 
+    // @PostMapping(value = "/reservations")
+    // public ResponseEntity<Reservation> reserveTimeslot(@RequestBody ZonedDateTime startTime) {
+    //     //find first doctor with this available time slot and update expireTime.
+    //     //if not available 
+    //     //return provider data
+    // }
 
 
-    @GetMapping(value = "/{}")
+    // @GetMapping(value = "/{}")
 
 }
