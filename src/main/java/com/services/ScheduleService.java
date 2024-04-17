@@ -9,7 +9,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.models.Availability;
-import com.models.Reservation;
+import com.models.ProviderAvailability;
 
 @Service
 public class ScheduleService {
@@ -18,9 +18,10 @@ public class ScheduleService {
     final Map<String,List<>> providerIdToTimeslots = new HashMap<>();
 
     //Assume overwrites all existing timeslots for providerId.
-    public void replaceTimeslots(final String providerId, final Availability availability) {
+    public void replaceTimeslots( final ProviderAvailability availability) {
         //create 15 min block of time between startTime and endTime inclusive
         //add this to list reservation with providerId
+        
     }
     
     public List<ZonedDateTime> getTimeslots() {

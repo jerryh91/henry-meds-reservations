@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.models.Availability;
+import com.models.ProviderAvailability;
 import com.services.ScheduleService;
 
 @RestController(value ="/api-reservations/v3/providers")
@@ -26,18 +27,11 @@ public class ProvidersController {
 //     - Allows providers to submit times they are available for appointments
 //     - e.g. On Friday the 13th of August, Dr. Jekyll wants to work between 8am and 3pm
     @PostMapping(value = "/{providerId}/timeslots", consumes = "application/json")
-    public ResponseEntity<String> replaceTimelots(@PathVariable String providerId, @RequestBody Availability availability) {
-        //edge cases: 
-        if (!availability.isValid()) return ResponseEntity.badRequest().body("StartTime or endTime provided is empty");
-        //if less than 15 mins between end - start 
-        if (ChronoUnit.MINUTES.between(availability.getStartDateTime(), availability.getEndDateTime()) < 15) {
-            return ResponseEntity.badRequest().body("EndTime is 15 minutes less than StartTime");
-        }
-        //Convert each UTC time to ensure date is in UTC
-        availability.setEndDateTime(availability.getEndDateTime().withZoneSameInstant(ZoneId.of("UTC")));
-        availability.setStartDateTime(availability.getStartDateTime().withZoneSameInstant(ZoneId.of("UTC")));
+    public ResponseEntity<String> replaceTimelots(@PathVariable String providerId, @RequestBody ProviderAvailability providerAvailability) {
+        if (!providerAvailability.isValid()) return ResponseEntity.badRequest().body("endTime is 15 minutes less than StartTime");
+       
         //call scheduleService to persist available time slots 
-        scheduleService.replaceTimeslots(providerId, availability);
+        scheduleService.replaceTimeslots(providerAvailability);
 
         return ResponseEntity.ok().body("Success");
     } 
