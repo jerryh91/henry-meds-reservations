@@ -1,7 +1,6 @@
 
 package com.henrymedstakehome.reservation.models;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 

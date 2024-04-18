@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.henrymedstakehome.reservation.models.ProviderAvailability;
+import com.henrymedstakehome.reservation.models.Reservation;
 import com.henrymedstakehome.reservation.services.ScheduleService;
 
 @RestController
@@ -33,7 +34,7 @@ public class ProvidersController {
        
         providerAvailability.setStartDateTime(providerAvailability.getStartDateTime().withZoneSameInstant(ZoneId.of("UTC")));
         providerAvailability.setEndDateTime(providerAvailability.getEndDateTime().withZoneSameInstant(ZoneId.of("UTC")));
-        //call scheduleService to persist available time slots 
+
         scheduleService.replaceTimeslots(providerAvailability);
 
         return ResponseEntity.ok().body("Success");
@@ -41,10 +42,26 @@ public class ProvidersController {
 
     // - Allows a client to retrieve a list of available appointment slots
     // - Appointment slots are 15 minutes long
-
+    // Reservations must be made at least 24 hours in advance: so don't return available timeslots < 24 hrs from request time
     @GetMapping(value = "/timeslots", produces = "application/json")
     public ResponseEntity<List<ZonedDateTime>> getTimeslots() {
         return ResponseEntity.ok().body(this.scheduleService.getProviderTimeslots());
     }
+
+    // - Allows clients to reserve an available appointment slot: 
+    // - Reservations expire after 30 minutes if not confirme
+    // Reservations must be made at least 24 hours in advance: validation
+
+    //update expiration time 30 mins after current time
+    @PostMapping(value = "/reservations")
+    public ResponseEntity<Reservation> reserveTimeslot(@RequestBody ZonedDateTime startTime) {
+        //find first doctor with this available time slot and update expireTime.
+        //if not available 
+        //return provider data
+    }
+
+
+
+    // - Allows clients to confirm their reservation: remove from timeslot map
 
 }
