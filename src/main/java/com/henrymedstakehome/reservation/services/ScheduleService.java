@@ -1,5 +1,6 @@
 package com.henrymedstakehome.reservation.services;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +24,7 @@ public class ScheduleService {
         this.timeslots = timeslots.stream().filter(t -> !t.getProvider().equals(providerAvailability.getProvider())).collect(Collectors 
                             .toCollection(ArrayList::new));
         ZonedDateTime currStartTime = providerAvailability.getStartDateTime();
-        ZonedDateTime endTime = providerAvailability.getEndDateTime();
+        final ZonedDateTime endTime = providerAvailability.getEndDateTime();
 
         //create 15 min block of time between startTime and endTime inclusive
         while (currStartTime.plusMinutes(15).isEqual(endTime) ||
@@ -31,18 +32,18 @@ public class ScheduleService {
             this.timeslots.add(new ProviderTimeslot(providerAvailability.getProvider(), currStartTime, null));
             currStartTime = currStartTime.plusMinutes(15);
         }
+        //sort asc to return to user later
         Collections.sort(timeslots);
-        // System.out.println("finished add timeslots");
     }
     
-    // public List<ZonedDateTime> getTimeslots() {
-
-    //     //iterate timeslots
-    //     //remove duplicate dateTimes with same startTime
-    //     //map starttime
-    //     //filter only startTime >= 24 hours currentTIme
-    //     final ZonedDateTime currentTime = ZonedDateTime.now(ZoneId.of("UTC"));
-
-
-    // }
+    public List<ZonedDateTime> getProviderTimeslots() {
+       final ZonedDateTime earliestTimeslot = ZonedDateTime.now(ZoneId.of("UTC")).plusHours(24);
+       return timeslots.stream()
+       //first bookable timeslot is >= 24 hours currentTIme
+       .filter(t -> t.getStartDateTime().isEqual(earliestTimeslot) || t.getStartDateTime().isAfter(earliestTimeslot))
+       .map(t -> t.getStartDateTime())
+       //may be duplicate availabilities from multiple providers
+       .distinct()
+       .collect(Collectors.toList());
+    }
 }

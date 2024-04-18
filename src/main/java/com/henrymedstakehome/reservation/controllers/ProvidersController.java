@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.henrymedstakehome.reservation.models.ProviderAvailability;
-import com.henrymedstakehome.reservation.models.ProviderTimeslot;
 import com.henrymedstakehome.reservation.services.ScheduleService;
 
 @RestController
@@ -40,9 +39,4 @@ public class ProvidersController {
         return ResponseEntity.ok().body("Success");
     } 
 
-
-    // @GetMapping(value = "/timeslots",  consumes = "application/json", produces = "application/json")
-    // public ResponseEntity<List<ZonedDateTime>> getTimeslots() {
-    //     return ResponseEntity.ok().body(this.scheduleService.getTimeslots());
-    // }
 }
