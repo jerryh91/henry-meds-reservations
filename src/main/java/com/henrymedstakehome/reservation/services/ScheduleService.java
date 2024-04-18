@@ -1,5 +1,6 @@
 package com.henrymedstakehome.reservation.services;
 
+import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -8,8 +9,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.swing.text.html.Option;
+
 import org.springframework.stereotype.Service;
 
+import com.henrymedstakehome.reservation.models.FormattedZonedDateTime;
 import com.henrymedstakehome.reservation.models.ProviderAvailability;
 import com.henrymedstakehome.reservation.models.ProviderTimeslot;
 import com.henrymedstakehome.reservation.models.Reservation;
@@ -52,20 +56,22 @@ public class ScheduleService {
        .collect(Collectors.toList());
     }
 
-    public Optional<Reservation> reserveProviderTimeslot(ZonedDateTime startTime) {
-        //find first doctor with this available time slot and update expireTime.
-        //if not available return empty
-        final ZonedDateTime currentTime = ZonedDateTime.now(ZoneId.of("UTC"));
-        final ZonedDateTime utcStartTime = startTime.withZoneSameInstant(ZoneId.of("UTC"));
+    public Optional<Reservation> reserveProviderTimeslot(FormattedZonedDateTime startTime) {  
+        final ZonedDateTime currentUTCTime = ZonedDateTime.now(ZoneId.of("UTC"));
+       
+        final ZonedDateTime startUTCTime = startTime.getStartDateTime().withZoneSameInstant(ZoneId.of("UTC"));
+       //validate request start time is >= 24 hours from currentTime
+       if (Duration.between(currentUTCTime, startUTCTime).toHours() < 24) return Optional.empty();
 
+        //find first doctor with this available time slot and update expireTime.
         Optional<ProviderTimeslot> timeslot = timeslots.stream()
         //** ensure this time slot is not already reserved by another user */
-        .filter(t -> t.getStartDateTime().isEqual(utcStartTime) && (t.getExpiredDateTime() == null || currentTime.isAfter(t.getExpiredDateTime())))
+        .filter(t -> t.getStartDateTime().isEqual(startUTCTime) &&  (t.getExpiredDateTime() == null || currentUTCTime.isAfter(t.getExpiredDateTime())) )
         .findFirst();
         if (timeslot.isEmpty()) return Optional.empty();
         
         final ProviderTimeslot providerTimeslot = timeslot.get();
-        providerTimeslot.setExpiredTime(currentTime.plusMinutes(30));
+        providerTimeslot.setExpiredTime(currentUTCTime.plusMinutes(30));
 
         return Optional.of(new Reservation(providerTimeslot.getProvider(), startTime));
      }
@@ -76,7 +82,7 @@ public class ScheduleService {
         //check current time is NOT past reservation expire time 
         Optional<ProviderTimeslot> timeslot = timeslots.stream()
         //** ensure this time slot with same provider, start time exists AND not past its expire time */
-        .filter(t -> t.getStartDateTime().isEqual(reservation.getStartTime()) && (t.getProvider().equals(reservation.getProvider())) && t.getExpiredDateTime().isAfter(utcCurrentTime))
+        .filter(t -> t.getStartDateTime().isEqual(reservation.getStartTime().getStartDateTime()) && (t.getProvider().equals(reservation.getProvider())) && t.getExpiredDateTime().isAfter(utcCurrentTime))
         .findFirst();
         if (timeslot.isEmpty()) return Optional.empty();
         //remove from available timeslots

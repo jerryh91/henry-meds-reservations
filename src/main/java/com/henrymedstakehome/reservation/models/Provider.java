@@ -6,12 +6,6 @@ public class Provider  {
     private String lastName;
     private String providerId;
 
-    // public Provider(String firstName, String lastName, String providerId) {
-    //     this.firstName = firstName;
-    //     this.lastName = lastName;
-    //     this.providerId = providerId;
-    // }
-
     public Provider() {
     }
 
@@ -21,6 +15,10 @@ public class Provider  {
 
     public String getFirstName() {
         return this.firstName;
+    }
+
+    public String getLastName() {
+        return this.lastName;
     }
 
     public String setLastName() {

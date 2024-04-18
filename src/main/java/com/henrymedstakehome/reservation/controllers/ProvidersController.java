@@ -1,20 +1,18 @@
 package com.henrymedstakehome.reservation.controllers;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.henrymedstakehome.reservation.models.FormattedZonedDateTime;
 import com.henrymedstakehome.reservation.models.ProviderAvailability;
 import com.henrymedstakehome.reservation.models.Reservation;
 import com.henrymedstakehome.reservation.services.ScheduleService;
@@ -53,7 +51,7 @@ public class ProvidersController {
 
     //update expiration time 30 mins after current time
     @PostMapping(value = "/reservations")
-    public ResponseEntity<Reservation> reserveTimeslot(@RequestBody ZonedDateTime startTime) {
+    public ResponseEntity<Reservation> reserveTimeslot(@RequestBody FormattedZonedDateTime startTime) {
        Optional<Reservation> reservation = this.scheduleService.reserveProviderTimeslot( startTime);
        if (reservation.isPresent()) {
         return ResponseEntity.ok().body(reservation.get());
@@ -62,7 +60,7 @@ public class ProvidersController {
        }
     }
 
-    // - Allows clients to confirm their reservation: remove from timeslot map
+    // - Allows clients to confirm their reservation:
     @PostMapping(value = "/bookings")
     public ResponseEntity<Reservation> bookTimeslot(@RequestBody Reservation reservation) {
        Optional<Reservation> confirmedReservation = this.scheduleService.bookProviderTimeslot(reservation);
@@ -72,5 +70,5 @@ public class ProvidersController {
         return ResponseEntity.notFound().build();
        }
     }
-    
+
 }

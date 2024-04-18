@@ -1,13 +1,11 @@
 package com.henrymedstakehome.reservation.models;
 
-import java.time.ZonedDateTime;
-
 public class Reservation {
 
     private Provider provider;
-    private ZonedDateTime startTime;
+    private FormattedZonedDateTime startTime;
 
-    public Reservation(Provider provider, ZonedDateTime startDateTime) {
+    public Reservation(Provider provider, FormattedZonedDateTime startDateTime) {
         this.provider = provider;
         this.startTime = startDateTime;
     }
@@ -22,11 +20,11 @@ public class Reservation {
         this.provider = provider;
     }
 
-    public ZonedDateTime getStartTime() {
+    public FormattedZonedDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(ZonedDateTime startTime) {
+    public void setStartTime(FormattedZonedDateTime startTime) {
         this.startTime = startTime;
     }
     
@@ -42,6 +40,6 @@ public class Reservation {
         }
          
         Reservation p = (Reservation) o;
-        return this.provider.equals(p.getProvider()) && this.startTime.isEqual(p.getStartTime());
+        return this.provider.equals(p.getProvider()) && this.startTime.getStartDateTime().isEqual(p.getStartTime().getStartDateTime());
     }
 }
