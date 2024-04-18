@@ -78,7 +78,8 @@ public class ScheduleService {
         return Optional.of(new Reservation(providerTimeslot.getProvider(), startTime));
      }
 
-     //** In production: will persist user and reservation mapping into datastore
+     //** In production: will persist user and reservation mapping into datastore.
+     //Omitting here because no exposed endpoints that need to return user booking data
      public Optional<Reservation> bookProviderTimeslot(Reservation reservation) {
         final ZonedDateTime utcCurrentTime = ZonedDateTime.now(ZoneId.of("UTC"));
 
