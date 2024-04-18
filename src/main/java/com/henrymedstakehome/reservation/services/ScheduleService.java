@@ -58,7 +58,10 @@ public class ScheduleService {
         final ZonedDateTime expireTime = ZonedDateTime.now(ZoneId.of("UTC"));
         final ZonedDateTime utcStartTime = startTime.withZoneSameInstant(ZoneId.of("UTC"));
 
-        Optional<ProviderTimeslot> timeslot = timeslots.stream().filter(t -> t.getStartDateTime().isEqual(utcStartTime)).findFirst();
+        Optional<ProviderTimeslot> timeslot = timeslots.stream()
+        //** ensure this time slot is not already reserved by another user */
+        .filter(t -> t.getStartDateTime().isEqual(utcStartTime) && (t.getExpiredDateTime() == null || expireTime.isAfter(t.getExpiredDateTime())))
+        .findFirst();
         if (timeslot.isEmpty()) return Optional.empty();
         
         ProviderTimeslot providerTimeslot = timeslot.get();
