@@ -90,6 +90,9 @@ public class ScheduleService {
         .findFirst();
         if (timeslot.isEmpty()) return Optional.empty();
         //remove from available timeslots
+        final ProviderTimeslot timeslotVal = timeslot.get();
+        reservation.getProvider().setFirstName(timeslotVal.getProvider().getFirstName());
+        reservation.getProvider().setLastName(timeslotVal.getProvider().getLastName());
         timeslots.remove(timeslot.get());
         return Optional.of(reservation);
      }  
