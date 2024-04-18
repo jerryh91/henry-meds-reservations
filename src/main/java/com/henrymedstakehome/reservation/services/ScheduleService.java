@@ -19,8 +19,7 @@ import com.henrymedstakehome.reservation.models.Reservation;
 
 @Service
 public class ScheduleService {
-    //Storing timeslots in local memory due to time
-    //In production will connect with an external db through ORM like hibernate
+    //** In production will connect with an external db.
     List<ProviderTimeslot> timeslots = new ArrayList<>();
     private static final int SLOT_DURATION_MINUTES = 15;
     private static final int MINIMUM_NEXT_APPOINTMENT_HOURS = 24;
@@ -73,12 +72,13 @@ public class ScheduleService {
         
         final ProviderTimeslot providerTimeslot = timeslot.get();
 
-      // - Reservations expire after 30 minutes if not confirmed
+        // - Reservations expire after 30 minutes if not confirmed
         providerTimeslot.setExpiredTime(currentUTCTime.plusMinutes(30));
 
         return Optional.of(new Reservation(providerTimeslot.getProvider(), startTime));
      }
 
+     //** In production: will persist user and reservation mapping into datastore
      public Optional<Reservation> bookProviderTimeslot(Reservation reservation) {
         final ZonedDateTime utcCurrentTime = ZonedDateTime.now(ZoneId.of("UTC"));
 
