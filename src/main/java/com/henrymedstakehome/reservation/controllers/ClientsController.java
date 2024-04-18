@@ -27,14 +27,7 @@ public class ClientsController {
     @Autowired
     private ScheduleService scheduleService;
 
-// - Allows a client to retrieve a list of available appointment slots
-// - Appointment slots are 15 minutes long
-// default: next 5 days 
 
-    @GetMapping(value = "/timeslots",  consumes = "application/json", produces = "application/json")
-    public ResponseEntity<List<ZonedDateTime>> getTimeslots() {
-        return ResponseEntity.ok().body(this.scheduleService.getProviderTimeslots());
-    }
 
     // //reserve timeslot: 
     // @PostMapping(value = "/reservations")
@@ -43,12 +36,5 @@ public class ClientsController {
     //     //if not available 
     //     //return provider data
     // }
-
-
-    @GetMapping(value = "/{}", produces = "application/json")
-    public ResponseEntity<String> replaceTimelots( @RequestBody ProviderAvailability providerAvailability) {
-     
-    }
-
     
 }

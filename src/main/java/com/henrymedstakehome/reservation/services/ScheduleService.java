@@ -39,7 +39,7 @@ public class ScheduleService {
     public List<ZonedDateTime> getProviderTimeslots() {
        final ZonedDateTime earliestTimeslot = ZonedDateTime.now(ZoneId.of("UTC")).plusHours(24);
        return timeslots.stream()
-       //first bookable timeslot is >= 24 hours currentTIme
+       //first bookable timeslot is >= 24 hours currentTime
        .filter(t -> t.getStartDateTime().isEqual(earliestTimeslot) || t.getStartDateTime().isAfter(earliestTimeslot))
        .map(t -> t.getStartDateTime())
        //may be duplicate availabilities from multiple providers

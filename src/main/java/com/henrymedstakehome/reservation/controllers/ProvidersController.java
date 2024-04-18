@@ -39,4 +39,12 @@ public class ProvidersController {
         return ResponseEntity.ok().body("Success");
     } 
 
+    // - Allows a client to retrieve a list of available appointment slots
+    // - Appointment slots are 15 minutes long
+
+    @GetMapping(value = "/timeslots", produces = "application/json")
+    public ResponseEntity<List<ZonedDateTime>> getTimeslots() {
+        return ResponseEntity.ok().body(this.scheduleService.getProviderTimeslots());
+    }
+
 }
