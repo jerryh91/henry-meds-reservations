@@ -43,5 +43,19 @@ public class ProviderTimeslot implements Comparable<ProviderTimeslot>{
         return this.startDateTime.compareTo(providerTimeslot.startDateTime);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == this) {
+            return true;
+        }
+
+        if (!(o instanceof ProviderTimeslot)) {
+            return false;
+        }
+         
+        ProviderTimeslot p = (ProviderTimeslot) o;
+        return this.provider.equals(p.getProvider()) && this.startDateTime.isEqual(p.getStartDateTime());
+    }
+
 
 }

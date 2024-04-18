@@ -62,8 +62,15 @@ public class ProvidersController {
        }
     }
 
-
-
     // - Allows clients to confirm their reservation: remove from timeslot map
-
+    @PostMapping(value = "/bookings")
+    public ResponseEntity<Reservation> bookTimeslot(@RequestBody Reservation reservation) {
+       Optional<Reservation> confirmedReservation = this.scheduleService.bookProviderTimeslot(reservation);
+       if (confirmedReservation.isPresent()) {
+        return ResponseEntity.ok().body(confirmedReservation.get());
+       } else {
+        return ResponseEntity.notFound().build();
+       }
+    }
+    
 }

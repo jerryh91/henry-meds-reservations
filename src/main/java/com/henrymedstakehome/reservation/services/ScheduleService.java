@@ -55,18 +55,32 @@ public class ScheduleService {
     public Optional<Reservation> reserveProviderTimeslot(ZonedDateTime startTime) {
         //find first doctor with this available time slot and update expireTime.
         //if not available return empty
-        final ZonedDateTime expireTime = ZonedDateTime.now(ZoneId.of("UTC"));
+        final ZonedDateTime currentTime = ZonedDateTime.now(ZoneId.of("UTC"));
         final ZonedDateTime utcStartTime = startTime.withZoneSameInstant(ZoneId.of("UTC"));
 
         Optional<ProviderTimeslot> timeslot = timeslots.stream()
         //** ensure this time slot is not already reserved by another user */
-        .filter(t -> t.getStartDateTime().isEqual(utcStartTime) && (t.getExpiredDateTime() == null || expireTime.isAfter(t.getExpiredDateTime())))
+        .filter(t -> t.getStartDateTime().isEqual(utcStartTime) && (t.getExpiredDateTime() == null || currentTime.isAfter(t.getExpiredDateTime())))
         .findFirst();
         if (timeslot.isEmpty()) return Optional.empty();
         
-        ProviderTimeslot providerTimeslot = timeslot.get();
-        providerTimeslot.setExpiredTime(expireTime);
+        final ProviderTimeslot providerTimeslot = timeslot.get();
+        providerTimeslot.setExpiredTime(currentTime.plusMinutes(30));
 
         return Optional.of(new Reservation(providerTimeslot.getProvider(), startTime));
      }
+
+     public Optional<Reservation> bookProviderTimeslot(Reservation reservation) {
+        final ZonedDateTime utcCurrentTime = ZonedDateTime.now(ZoneId.of("UTC"));
+
+        //check current time is NOT past reservation expire time 
+        Optional<ProviderTimeslot> timeslot = timeslots.stream()
+        //** ensure this time slot with same provider, start time exists AND not past its expire time */
+        .filter(t -> t.getStartDateTime().isEqual(reservation.getStartTime()) && (t.getProvider().equals(reservation.getProvider())) && t.getExpiredDateTime().isAfter(utcCurrentTime))
+        .findFirst();
+        if (timeslot.isEmpty()) return Optional.empty();
+        //remove from available timeslots
+        timeslots.remove(timeslot.get());
+        return Optional.of(reservation);
+     }  
 }
