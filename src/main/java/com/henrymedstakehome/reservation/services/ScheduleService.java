@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.swing.text.html.Option;
 
 import org.springframework.stereotype.Service;
 
@@ -23,6 +22,8 @@ public class ScheduleService {
     //Storing timeslots in local memory due to time
     //In production will connect with an external db through ORM like hibernate
     List<ProviderTimeslot> timeslots = new ArrayList<>();
+    private static final int SLOT_DURATION_MINUTES = 15;
+    private static final int MINIMUM_NEXT_APPOINTMENT_HOURS = 24;
 
     //Assume: overwrites all existing timeslots for providerId.
     public void replaceTimeslots(final ProviderAvailability providerAvailability) {
@@ -36,17 +37,17 @@ public class ScheduleService {
         final ZonedDateTime endTime = providerAvailability.getEndDateTime();
 
         //create 15 min block of time between startTime and endTime inclusive
-        while (currStartTime.plusMinutes(15).isEqual(endTime) ||
-               currStartTime.plusMinutes(15).isBefore(endTime)) {
+        while (currStartTime.plusMinutes(SLOT_DURATION_MINUTES).isEqual(endTime) ||
+               currStartTime.plusMinutes(SLOT_DURATION_MINUTES).isBefore(endTime)) {
             this.timeslots.add(new ProviderTimeslot(providerAvailability.getProvider(), currStartTime, null));
-            currStartTime = currStartTime.plusMinutes(15);
+            currStartTime = currStartTime.plusMinutes(SLOT_DURATION_MINUTES);
         }
         //sort asc to return to user later
         Collections.sort(timeslots);
     }
     
     public List<ZonedDateTime> getProviderTimeslots() {
-       final ZonedDateTime earliestTimeslot = ZonedDateTime.now(ZoneId.of("UTC")).plusHours(24);
+       final ZonedDateTime earliestTimeslot = ZonedDateTime.now(ZoneId.of("UTC")).plusHours(MINIMUM_NEXT_APPOINTMENT_HOURS);
        return timeslots.stream()
        //first bookable timeslot is >= 24 hours currentTime
        .filter(t -> t.getStartDateTime().isEqual(earliestTimeslot) || t.getStartDateTime().isAfter(earliestTimeslot))
@@ -61,7 +62,7 @@ public class ScheduleService {
        
         final ZonedDateTime startUTCTime = startTime.getStartDateTime().withZoneSameInstant(ZoneId.of("UTC"));
        //validate request start time is >= 24 hours from currentTime
-       if (Duration.between(currentUTCTime, startUTCTime).toHours() < 24) return Optional.empty();
+       if (Duration.between(currentUTCTime, startUTCTime).toHours() < MINIMUM_NEXT_APPOINTMENT_HOURS) return Optional.empty();
 
         //find first doctor with this available time slot and update expireTime.
         Optional<ProviderTimeslot> timeslot = timeslots.stream()
@@ -71,6 +72,8 @@ public class ScheduleService {
         if (timeslot.isEmpty()) return Optional.empty();
         
         final ProviderTimeslot providerTimeslot = timeslot.get();
+
+      // - Reservations expire after 30 minutes if not confirmed
         providerTimeslot.setExpiredTime(currentUTCTime.plusMinutes(30));
 
         return Optional.of(new Reservation(providerTimeslot.getProvider(), startTime));

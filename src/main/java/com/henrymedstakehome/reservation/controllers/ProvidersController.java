@@ -18,9 +18,8 @@ import com.henrymedstakehome.reservation.models.Reservation;
 import com.henrymedstakehome.reservation.services.ScheduleService;
 
 @RestController
-@RequestMapping("/api-reservations/v3/providers")
+@RequestMapping("/v3/providers")
 public class ProvidersController {
-    
     
     @Autowired
     private ScheduleService scheduleService;
@@ -31,9 +30,7 @@ public class ProvidersController {
     public ResponseEntity<String> replaceTimelots( @RequestBody ProviderAvailability providerAvailability) {
         if (!providerAvailability.isValid()) return ResponseEntity.badRequest().body("endTime is 15 minutes less than StartTime");
        
-       
         scheduleService.replaceTimeslots(providerAvailability);
-
         return ResponseEntity.ok().body("Success");
     } 
 
@@ -46,10 +43,6 @@ public class ProvidersController {
     }
 
     // - Allows clients to reserve an available appointment slot: 
-    // - Reservations expire after 30 minutes if not confirme
-    // Reservations must be made at least 24 hours in advance: validation
-
-    //update expiration time 30 mins after current time
     @PostMapping(value = "/reservations")
     public ResponseEntity<Reservation> reserveTimeslot(@RequestBody FormattedZonedDateTime startTime) {
        Optional<Reservation> reservation = this.scheduleService.reserveProviderTimeslot( startTime);
