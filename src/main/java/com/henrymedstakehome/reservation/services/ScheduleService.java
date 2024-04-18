@@ -93,7 +93,7 @@ public class ScheduleService {
         final ProviderTimeslot timeslotVal = timeslot.get();
         reservation.getProvider().setFirstName(timeslotVal.getProvider().getFirstName());
         reservation.getProvider().setLastName(timeslotVal.getProvider().getLastName());
-        timeslots.remove(timeslot.get());
+        timeslots.remove(timeslotVal);
         return Optional.of(reservation);
      }  
 }
