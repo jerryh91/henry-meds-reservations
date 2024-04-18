@@ -4,6 +4,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -32,9 +33,7 @@ public class ProvidersController {
     public ResponseEntity<String> replaceTimelots( @RequestBody ProviderAvailability providerAvailability) {
         if (!providerAvailability.isValid()) return ResponseEntity.badRequest().body("endTime is 15 minutes less than StartTime");
        
-        providerAvailability.setStartDateTime(providerAvailability.getStartDateTime().withZoneSameInstant(ZoneId.of("UTC")));
-        providerAvailability.setEndDateTime(providerAvailability.getEndDateTime().withZoneSameInstant(ZoneId.of("UTC")));
-
+       
         scheduleService.replaceTimeslots(providerAvailability);
 
         return ResponseEntity.ok().body("Success");
@@ -55,9 +54,12 @@ public class ProvidersController {
     //update expiration time 30 mins after current time
     @PostMapping(value = "/reservations")
     public ResponseEntity<Reservation> reserveTimeslot(@RequestBody ZonedDateTime startTime) {
-        //find first doctor with this available time slot and update expireTime.
-        //if not available 
-        //return provider data
+       Optional<Reservation> reservation = this.scheduleService.reserveProviderTimeslot( startTime);
+       if (reservation.isPresent()) {
+        return ResponseEntity.ok().body(reservation.get());
+       } else {
+        return ResponseEntity.notFound().build();
+       }
     }
 
 

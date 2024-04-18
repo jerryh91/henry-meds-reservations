@@ -7,7 +7,15 @@ public class Reservation {
     private Provider provider;
     private ZonedDateTime startTime;
 
+
+    public Reservation(Provider provider, ZonedDateTime startDateTime) {
+        this.provider = provider;
+        this.startTime = startDateTime;
+    }
+
     public Reservation() {}
+
+
 
     public Provider getProvider() {
         return provider;

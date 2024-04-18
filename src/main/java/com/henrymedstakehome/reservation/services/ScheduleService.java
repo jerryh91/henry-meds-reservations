@@ -5,12 +5,14 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.henrymedstakehome.reservation.models.ProviderAvailability;
 import com.henrymedstakehome.reservation.models.ProviderTimeslot;
+import com.henrymedstakehome.reservation.models.Reservation;
 
 @Service
 public class ScheduleService {
@@ -20,6 +22,9 @@ public class ScheduleService {
 
     //Assume: overwrites all existing timeslots for providerId.
     public void replaceTimeslots(final ProviderAvailability providerAvailability) {
+        providerAvailability.setStartDateTime(providerAvailability.getStartDateTime().withZoneSameInstant(ZoneId.of("UTC")));
+        providerAvailability.setEndDateTime(providerAvailability.getEndDateTime().withZoneSameInstant(ZoneId.of("UTC")));
+
         //remove all existing provider timeslots
         this.timeslots = timeslots.stream().filter(t -> !t.getProvider().equals(providerAvailability.getProvider())).collect(Collectors 
                             .toCollection(ArrayList::new));
@@ -46,4 +51,19 @@ public class ScheduleService {
        .distinct()
        .collect(Collectors.toList());
     }
+
+    public Optional<Reservation> reserveProviderTimeslot(ZonedDateTime startTime) {
+        //find first doctor with this available time slot and update expireTime.
+        //if not available return empty
+        final ZonedDateTime expireTime = ZonedDateTime.now(ZoneId.of("UTC"));
+        final ZonedDateTime utcStartTime = startTime.withZoneSameInstant(ZoneId.of("UTC"));
+
+        Optional<ProviderTimeslot> timeslot = timeslots.stream().filter(t -> t.getStartDateTime().isEqual(utcStartTime)).findFirst();
+        if (timeslot.isEmpty()) return Optional.empty();
+        
+        ProviderTimeslot providerTimeslot = timeslot.get();
+        providerTimeslot.setExpiredTime(expireTime);
+
+        return Optional.of(new Reservation(providerTimeslot.getProvider(), startTime));
+     }
 }
